@@ -2,299 +2,230 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<title>IMPERIUM — IMP · Chat Privado</title>
-<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>IMPERIUM</title>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#00ff88">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="IMPERIUM">
+<link rel="apple-touch-icon" href="icon-192.png">
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
 <style>
-:root {
-  --bg:#0e0e12; --bg2:#13131a; --surface:#1e1e2e; --surface2:#252538;
-  --border:#2a2a40; --border2:#353555;
-  --accent:#7c6af7; --accent2:#9d8fff; --accent-glow:rgba(124,106,247,0.25);
-  --green:#4ade80; --red:#f87171; --blue:#60a5fa;
-  --text:#e2e2f0; --text2:#8888aa; --text3:#555577;
-  --mine-bg:rgba(124,106,247,0.15); --mine-border:rgba(124,106,247,0.4);
-  --their-bg:rgba(255,255,255,0.04); --their-border:rgba(255,255,255,0.08);
-  --sidebar-w:260px;
-}
-*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
-body{background:var(--bg);color:var(--text);font-family:'Space Grotesk',sans-serif;height:100dvh;overflow:hidden;display:flex;}
-body::after{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");pointer-events:none;z-index:999;opacity:0.4;}
-::-webkit-scrollbar{width:4px;}
-::-webkit-scrollbar-thumb{background:var(--border2);border-radius:4px;}
+  :root {
+    --green:#00ff88; --dim:#00994d; --dark:#050f0a;
+    --panel:#0a1a10; --panel2:#0d2015; --border:#1a4a2a;
+    --red:#ff3366; --amber:#ffaa00; --blue:#00aaff;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{background:var(--dark);color:var(--green);font-family:'Share Tech Mono',monospace;height:100vh;display:flex;flex-direction:column;overflow:hidden;}
+  body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,255,136,0.012) 2px,rgba(0,255,136,0.012) 4px);pointer-events:none;z-index:0;}
 
-/* ══ LOGIN ══ */
-#loginScreen{position:fixed;inset:0;z-index:100;background:var(--bg);display:flex;align-items:center;justify-content:center;padding:24px;}
-.login-wrap{width:100%;max-width:420px;display:flex;flex-direction:column;gap:28px;}
-.login-logo{text-align:center;}
-.logo-mark{width:64px;height:64px;margin:0 auto 14px;background:linear-gradient(135deg,var(--accent),#c084fc);border-radius:18px;display:flex;align-items:center;justify-content:center;font-size:28px;box-shadow:0 0 40px var(--accent-glow);animation:logoFloat 4s ease-in-out infinite;}
-@keyframes logoFloat{0%,100%{transform:translateY(0);}50%{transform:translateY(-6px);}}
-.logo-name{font-family:'JetBrains Mono',monospace;font-size:2rem;font-weight:700;background:linear-gradient(135deg,#fff 30%,var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;letter-spacing:0.1em;}
-.logo-sub{font-size:0.75rem;color:var(--text2);letter-spacing:0.15em;text-transform:uppercase;margin-top:6px;}
-.login-card{background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:32px 28px;display:flex;flex-direction:column;gap:18px;box-shadow:0 24px 80px rgba(0,0,0,0.5);}
-.field-group{display:flex;flex-direction:column;gap:7px;}
-.field-label{font-size:0.72rem;font-weight:600;color:var(--text2);letter-spacing:0.12em;text-transform:uppercase;}
-.field-input{background:var(--bg2);border:1.5px solid var(--border);border-radius:10px;padding:12px 16px;font-family:'Space Grotesk',sans-serif;font-size:0.95rem;color:var(--text);outline:none;width:100%;transition:border-color 0.2s,box-shadow 0.2s;}
-.field-input:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-glow);}
-.field-input::placeholder{color:var(--text3);}
-.field-hint{font-size:0.67rem;color:var(--text3);line-height:1.5;}
-.crypto-preview{background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:10px 14px;font-family:'JetBrains Mono',monospace;font-size:0.63rem;color:var(--accent2);opacity:0;transition:opacity 0.3s;min-height:34px;word-break:break-all;line-height:1.5;}
-.crypto-preview.show{opacity:1;}
-.login-btn{padding:14px;background:linear-gradient(135deg,var(--accent),#9d50ea);border:none;border-radius:10px;color:#fff;font-family:'Space Grotesk',sans-serif;font-size:0.9rem;font-weight:700;letter-spacing:0.08em;cursor:pointer;transition:all 0.2s;box-shadow:0 4px 20px var(--accent-glow);}
-.login-btn:hover{transform:translateY(-2px);box-shadow:0 8px 30px rgba(124,106,247,0.4);}
-.error-msg{font-size:0.72rem;color:var(--red);text-align:center;display:none;padding:8px;background:rgba(248,113,113,0.08);border:1px solid rgba(248,113,113,0.2);border-radius:8px;}
+  /* LOGIN */
+  #loginScreen{position:fixed;inset:0;background:var(--dark);display:flex;align-items:center;justify-content:center;z-index:100;padding:24px;}
+  .login-box{background:var(--panel);border:1px solid var(--border);border-radius:6px;padding:36px 32px;width:100%;max-width:400px;display:flex;flex-direction:column;gap:18px;}
+  .login-logo{text-align:center;}
+  .login-logo-main{font-family:'Orbitron',sans-serif;font-size:2.2rem;font-weight:900;color:var(--green);text-shadow:0 0 30px rgba(0,255,136,0.6),0 0 60px rgba(0,255,136,0.2);letter-spacing:0.2em;animation:flicker 7s infinite;}
+  .login-logo-sub{font-size:0.65rem;color:var(--dim);letter-spacing:0.35em;text-transform:uppercase;margin-top:4px;}
+  @keyframes flicker{0%,94%,96%,100%{opacity:1}95%{opacity:0.6}}
+  .field-label{font-size:0.68rem;letter-spacing:0.2em;color:var(--amber);text-transform:uppercase;margin-bottom:6px;}
+  .field-hint{font-size:0.6rem;color:var(--dim);margin-top:5px;letter-spacing:0.08em;}
+  input[type="text"],input[type="password"]{width:100%;background:rgba(0,0,0,0.4);border:1px solid var(--border);border-radius:3px;color:var(--green);font-family:'Share Tech Mono',monospace;font-size:1rem;padding:10px 12px;outline:none;transition:border-color 0.2s;}
+  input:focus{border-color:var(--green);box-shadow:0 0 12px rgba(0,255,136,0.15);}
+  .btn{padding:12px;border:1px solid var(--green);background:transparent;color:var(--green);font-family:'Orbitron',sans-serif;font-size:0.75rem;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;cursor:pointer;border-radius:3px;transition:all 0.2s;width:100%;}
+  .btn:hover{background:var(--green);color:var(--dark);box-shadow:0 0 18px rgba(0,255,136,0.4);}
+  .error-msg{font-size:0.7rem;color:var(--red);letter-spacing:0.1em;text-align:center;display:none;}
+  .enc-notice{background:rgba(0,255,136,0.05);border:1px solid rgba(0,255,136,0.15);border-radius:4px;padding:10px 12px;font-size:0.65rem;color:var(--dim);letter-spacing:0.08em;line-height:1.6;}
+  .enc-notice strong{color:var(--green);}
 
-/* ══ APP ══ */
-#appScreen{display:none;width:100%;height:100dvh;}
-.app-layout{display:flex;height:100%;}
+  /* APP */
+  #appScreen{display:none;flex-direction:row;height:100vh;position:relative;z-index:1;}
 
-/* ══ SIDEBAR ══ */
-.sidebar{width:var(--sidebar-w);min-width:var(--sidebar-w);background:var(--bg2);border-right:1px solid var(--border);display:flex;flex-direction:column;overflow:hidden;transition:transform 0.3s;}
-.sidebar-top{padding:16px;border-bottom:1px solid var(--border);display:flex;flex-direction:column;gap:12px;}
-.sidebar-brand{display:flex;align-items:center;gap:10px;}
-.brand-dot{width:8px;height:8px;border-radius:50%;background:var(--green);box-shadow:0 0 8px var(--green);animation:pulse 2.5s ease-in-out infinite;}
-@keyframes pulse{0%,100%{opacity:1;transform:scale(1);}50%{opacity:0.4;transform:scale(0.8);}}
-.brand-name{font-family:'JetBrains Mono',monospace;font-size:0.85rem;font-weight:700;color:var(--text);letter-spacing:0.12em;}
-.brand-sub{font-size:0.6rem;color:var(--text3);letter-spacing:0.1em;}
-.search-box{background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:8px 12px;font-family:'Space Grotesk',sans-serif;font-size:0.8rem;color:var(--text);outline:none;width:100%;}
-.search-box::placeholder{color:var(--text3);}
-.section-hdr{display:flex;align-items:center;justify-content:space-between;padding:10px 16px 4px;}
-.section-hdr-label{font-size:0.62rem;font-weight:700;color:var(--text3);letter-spacing:0.18em;text-transform:uppercase;}
-.section-hdr-btn{width:20px;height:20px;background:var(--surface2);border:1px solid var(--border);border-radius:5px;color:var(--text2);font-size:0.85rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.15s;line-height:1;}
-.section-hdr-btn:hover{background:var(--accent);border-color:var(--accent);color:#fff;}
-.nav-item{display:flex;align-items:center;gap:10px;padding:9px 12px;margin:2px 8px;border-radius:8px;cursor:pointer;font-size:0.85rem;color:var(--text2);transition:all 0.15s;position:relative;}
-.nav-item:hover{background:var(--surface);color:var(--text);}
-.nav-item.active{background:rgba(124,106,247,0.15);color:var(--accent2);}
-.nav-item.active::before{content:'';position:absolute;left:-8px;top:50%;transform:translateY(-50%);width:3px;height:60%;background:var(--accent);border-radius:0 3px 3px 0;}
-.nav-icon{font-size:0.9rem;width:18px;text-align:center;flex-shrink:0;}
-.nav-label{flex:1;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
-.nav-badge{background:var(--red);color:#fff;font-size:0.58rem;font-weight:700;border-radius:10px;padding:1px 6px;min-width:18px;text-align:center;}
-.pip{width:7px;height:7px;border-radius:50%;background:var(--border2);flex-shrink:0;}
-.pip.online{background:var(--green);box-shadow:0 0 5px var(--green);}
-.contacts-scroll{flex:1;overflow-y:auto;padding-bottom:8px;}
-.me-bar{padding:12px 16px;border-top:1px solid var(--border);background:var(--bg);display:flex;align-items:center;gap:10px;}
-.me-avatar{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--accent),#c084fc);display:flex;align-items:center;justify-content:center;font-size:0.7rem;font-weight:700;color:#fff;flex-shrink:0;}
-.me-info{flex:1;overflow:hidden;}
-.me-name{font-size:0.82rem;font-weight:600;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
-.me-status{font-size:0.65rem;color:var(--green);}
+  /* SIDEBAR */
+  .sidebar{width:230px;min-width:230px;background:var(--panel);border-right:1px solid var(--border);display:flex;flex-direction:column;overflow:hidden;}
+  .sidebar-header{padding:12px 14px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px;}
+  .sidebar-logo{font-family:'Orbitron',sans-serif;font-size:0.9rem;font-weight:900;color:var(--green);text-shadow:0 0 8px rgba(0,255,136,0.4);letter-spacing:0.15em;}
+  .sidebar-imp{font-size:0.6rem;color:var(--dim);letter-spacing:0.2em;}
+  .status-dot{width:7px;height:7px;border-radius:50%;background:var(--green);box-shadow:0 0 6px var(--green);animation:pulse 2s infinite;flex-shrink:0;margin-left:auto;}
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:0.3}}
+  .sidebar-section{padding:8px 14px 4px;font-size:0.6rem;letter-spacing:0.2em;color:var(--amber);text-transform:uppercase;border-top:1px solid var(--border);margin-top:2px;display:flex;align-items:center;justify-content:space-between;}
+  .add-dm-btn{background:transparent;border:1px solid var(--border);color:var(--dim);font-size:0.65rem;padding:2px 8px;border-radius:3px;cursor:pointer;font-family:'Share Tech Mono',monospace;transition:all 0.15s;}
+  .add-dm-btn:hover{border-color:var(--green);color:var(--green);}
+  .room-item{display:flex;align-items:center;justify-content:space-between;padding:9px 14px;cursor:pointer;font-size:0.8rem;letter-spacing:0.05em;color:var(--dim);transition:all 0.15s;border-left:2px solid transparent;}
+  .room-item:hover{background:rgba(0,255,136,0.06);color:var(--green);}
+  .room-item.active{background:rgba(0,255,136,0.1);color:var(--green);border-left-color:var(--green);}
+  .room-item.dm{color:#4488aa;}
+  .room-item.dm:hover{color:var(--blue);background:rgba(0,170,255,0.06);}
+  .room-item.active.dm{background:rgba(0,170,255,0.08);color:#99ddff;border-left-color:var(--blue);}
+  .dm-item-inner{display:flex;align-items:center;gap:6px;}
+  .online-pip{width:5px;height:5px;border-radius:50%;background:var(--dim);flex-shrink:0;}
+  .online-pip.on{background:var(--green);box-shadow:0 0 4px var(--green);}
+  .unread-badge{background:var(--red);color:#fff;font-size:0.55rem;font-weight:bold;border-radius:10px;padding:1px 6px;min-width:18px;text-align:center;}
+  .contacts-list{flex:1;overflow-y:auto;}
+  .contacts-list::-webkit-scrollbar{width:3px;}
+  .contacts-list::-webkit-scrollbar-thumb{background:var(--border);}
+  .sidebar-me{padding:10px 14px;border-top:1px solid var(--border);font-size:0.65rem;color:var(--dim);letter-spacing:0.08em;}
+  .sidebar-me span{color:var(--amber);}
 
-/* ══ CHAT AREA ══ */
-.chat-area{flex:1;display:flex;flex-direction:column;overflow:hidden;background:var(--bg);}
-.chat-header{display:flex;align-items:center;justify-content:space-between;padding:14px 20px;background:var(--bg2);border-bottom:1px solid var(--border);flex-shrink:0;gap:12px;}
-.chat-header-left{display:flex;align-items:center;gap:12px;flex:1;overflow:hidden;}
-.chat-header-icon{font-size:1rem;color:var(--accent2);flex-shrink:0;}
-.chat-header-info{overflow:hidden;}
-.chat-header-title{font-size:1rem;font-weight:700;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
-.chat-header-sub{font-size:0.68rem;color:var(--text2);margin-top:1px;display:flex;align-items:center;gap:5px;}
-.chat-header-sub .opip{width:6px;height:6px;border-radius:50%;flex-shrink:0;}
-.chat-header-sub .opip.on{background:var(--green);box-shadow:0 0 4px var(--green);}
-.chat-header-sub .opip.off{background:var(--text3);}
-.imp-badge{font-family:'JetBrains Mono',monospace;font-size:0.62rem;color:var(--accent2);background:rgba(124,106,247,0.12);border:1px solid rgba(124,106,247,0.25);border-radius:8px;padding:5px 10px;letter-spacing:0.08em;flex-shrink:0;}
-.menu-btn{display:none;background:transparent;border:none;color:var(--text2);font-size:1.2rem;cursor:pointer;padding:4px;border-radius:6px;}
-.menu-btn:hover{color:var(--text);background:var(--surface);}
+  /* MODAL */
+  .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:200;display:none;align-items:center;justify-content:center;}
+  .modal-overlay.show{display:flex;}
+  .modal-box{background:var(--panel);border:1px solid var(--border);border-radius:6px;padding:28px 24px;width:100%;max-width:320px;display:flex;flex-direction:column;gap:14px;}
+  .modal-title{font-family:'Orbitron',sans-serif;font-size:0.9rem;font-weight:700;color:var(--green);letter-spacing:0.1em;}
+  .modal-sub{font-size:0.65rem;color:var(--dim);letter-spacing:0.1em;}
+  .modal-btns{display:flex;gap:8px;}
+  .modal-btns .btn{padding:9px;}
+  .btn-cancel{border-color:var(--border);color:var(--dim);}
+  .btn-cancel:hover{background:var(--border);color:var(--green);}
 
-/* ══ MESSAGES ══ */
-#messagesContainer{flex:1;overflow-y:auto;padding:20px 16px;display:flex;flex-direction:column;gap:4px;}
-.msg-day-divider{text-align:center;margin:12px 0 6px;position:relative;}
-.msg-day-divider::before{content:'';position:absolute;left:0;right:0;top:50%;height:1px;background:var(--border);}
-.msg-day-divider span{position:relative;z-index:1;background:var(--bg);padding:0 12px;font-size:0.65rem;color:var(--text3);letter-spacing:0.12em;text-transform:uppercase;}
-.message{display:flex;gap:10px;animation:msgIn 0.2s ease;max-width:100%;}
-@keyframes msgIn{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
-.message.mine{flex-direction:row-reverse;align-self:flex-end;}
-.message.theirs{align-self:flex-start;}
-.message.system{align-self:center;}
-.msg-avatar{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.7rem;font-weight:700;color:#fff;flex-shrink:0;margin-top:2px;font-family:'JetBrains Mono',monospace;}
-.msg-body{display:flex;flex-direction:column;max-width:72%;}
-.message.mine .msg-body{align-items:flex-end;}
-.msg-meta{display:flex;align-items:baseline;gap:8px;margin-bottom:4px;}
-.message.mine .msg-meta{flex-direction:row-reverse;}
-.msg-sender{font-size:0.75rem;font-weight:700;}
-.msg-time{font-size:0.62rem;color:var(--text3);}
+  /* CHAT */
+  .chat-area{flex:1;display:flex;flex-direction:column;overflow:hidden;}
+  .chat-header{display:flex;align-items:center;justify-content:space-between;padding:10px 16px;background:var(--panel2);border-bottom:1px solid var(--border);flex-shrink:0;}
+  .chat-title{font-family:'Orbitron',sans-serif;font-size:0.95rem;font-weight:700;color:var(--green);letter-spacing:0.1em;}
+  .chat-title.dm{color:var(--blue);text-shadow:0 0 8px rgba(0,170,255,0.3);}
+  .chat-sub{font-size:0.6rem;color:var(--dim);letter-spacing:0.15em;margin-top:2px;}
 
-/* Bubble — cifrado (default) */
-.msg-bubble{padding:10px 14px;border-radius:16px;font-size:0.88rem;line-height:1.55;word-break:break-word;position:relative;}
-.message.mine .msg-bubble{background:var(--mine-bg);border:1px solid var(--mine-border);color:var(--accent2);border-radius:16px 4px 16px 16px;}
-.message.theirs .msg-bubble{background:var(--their-bg);border:1px solid var(--their-border);color:var(--text);border-radius:4px 16px 16px 16px;}
-.message.system .msg-bubble{background:transparent;border:none;color:var(--text3);font-size:0.7rem;letter-spacing:0.1em;padding:4px 0;}
+  /* ENC STATUS BAR */
+  .enc-bar{display:flex;align-items:center;gap:8px;padding:5px 16px;background:rgba(0,255,136,0.04);border-bottom:1px solid var(--border);flex-shrink:0;}
+  .enc-icon{font-size:0.75rem;}
+  .enc-bar-text{font-size:0.62rem;color:var(--dim);letter-spacing:0.12em;text-transform:uppercase;}
+  .enc-bar-text strong{color:var(--green);}
 
-/* Bubble cifrada: fuente mono, colores más apagados */
-.msg-bubble.is-cipher{
-  font-family:'JetBrains Mono',monospace;
-  font-size:0.68rem;
-  letter-spacing:0.04em;
-  word-break:break-all;
-}
-.message.mine .msg-bubble.is-cipher{color:rgba(157,143,255,0.45);}
-.message.theirs .msg-bubble.is-cipher{color:rgba(255,255,255,0.2);}
+  /* MESSAGES */
+  #messagesContainer{flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:10px;}
+  #messagesContainer::-webkit-scrollbar{width:4px;}
+  #messagesContainer::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px;}
 
-/* Bubble descifrada */
-.msg-bubble.is-plain{font-family:'Space Grotesk',sans-serif;}
-.message.mine .msg-bubble.is-plain{color:var(--accent2);}
-.message.theirs .msg-bubble.is-plain{color:var(--text);}
+  .message{display:flex;flex-direction:column;max-width:78%;animation:fadeIn 0.25s ease;}
+  @keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+  .message.mine{align-self:flex-end;align-items:flex-end;}
+  .message.theirs{align-self:flex-start;align-items:flex-start;}
+  .message.system{align-self:center;align-items:center;max-width:90%;}
 
-/* Botón descifrar */
-.decode-btn{
-  display:inline-flex;align-items:center;gap:4px;
-  margin-top:5px;
-  background:transparent;
-  border:1px solid var(--border2);
-  border-radius:6px;
-  color:var(--text3);font-size:0.64rem;
-  padding:3px 9px;cursor:pointer;
-  font-family:'JetBrains Mono',monospace;
-  letter-spacing:0.06em;
-  transition:all 0.15s;
-  user-select:none;
-}
-.decode-btn:hover{border-color:var(--accent);color:var(--accent2);background:rgba(124,106,247,0.08);}
-.decode-btn.revealed{border-color:var(--green);color:var(--green);background:rgba(74,222,128,0.06);}
+  .msg-name{font-size:0.62rem;letter-spacing:0.12em;color:var(--amber);margin-bottom:3px;text-transform:uppercase;}
+  .message.mine .msg-name{color:var(--blue);}
 
-/* ══ INPUT ══ */
-.input-area{padding:12px 16px;background:var(--bg2);border-top:1px solid var(--border);flex-shrink:0;}
-.input-wrap{display:flex;gap:10px;align-items:flex-end;background:var(--surface);border:1.5px solid var(--border);border-radius:14px;padding:8px 12px;transition:border-color 0.2s,box-shadow 0.2s;}
-.input-wrap:focus-within{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-glow);}
-#msgInput{flex:1;background:transparent;border:none;outline:none;color:var(--text);font-family:'Space Grotesk',sans-serif;font-size:0.9rem;resize:none;line-height:1.5;max-height:120px;padding:2px 0;}
-#msgInput::placeholder{color:var(--text3);}
-.send-btn{width:36px;height:36px;border-radius:10px;border:none;background:linear-gradient(135deg,var(--accent),#9d50ea);color:#fff;font-size:1rem;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all 0.2s;box-shadow:0 2px 10px var(--accent-glow);}
-.send-btn:hover{transform:scale(1.05);}
-.send-btn:active{transform:scale(0.97);}
+  /* Bubble wrapper holds bubble + decode btn */
+  .bubble-row{display:flex;align-items:flex-end;gap:6px;}
+  .message.mine .bubble-row{flex-direction:row-reverse;}
 
-/* ══ MODALS ══ */
-.modal-overlay{position:fixed;inset:0;z-index:200;background:rgba(0,0,0,0.7);backdrop-filter:blur(4px);display:none;align-items:center;justify-content:center;}
-.modal-overlay.show{display:flex;}
-.modal-card{background:var(--surface);border:1px solid var(--border2);border-radius:20px;padding:28px 24px;width:100%;max-width:340px;display:flex;flex-direction:column;gap:16px;box-shadow:0 24px 60px rgba(0,0,0,0.6);animation:modalIn 0.2s ease;}
-@keyframes modalIn{from{opacity:0;transform:scale(0.95) translateY(10px);}to{opacity:1;transform:scale(1) translateY(0);}}
-.modal-title{font-size:1rem;font-weight:700;color:var(--text);display:flex;align-items:center;gap:10px;}
-.modal-sub{font-size:0.75rem;color:var(--text2);line-height:1.5;}
-.modal-btns{display:flex;gap:8px;}
-.modal-btn{flex:1;padding:10px;border-radius:10px;border:1px solid var(--border);font-family:'Space Grotesk',sans-serif;font-size:0.82rem;font-weight:600;cursor:pointer;transition:all 0.15s;}
-.modal-btn-primary{background:linear-gradient(135deg,var(--accent),#9d50ea);color:#fff;border-color:transparent;}
-.modal-btn-primary:hover{transform:translateY(-1px);box-shadow:0 4px 14px var(--accent-glow);}
-.modal-btn-cancel{background:transparent;color:var(--text2);}
-.modal-btn-cancel:hover{background:var(--surface2);color:var(--text);}
+  .msg-bubble{padding:9px 13px;border-radius:4px;font-size:0.88rem;line-height:1.5;word-break:break-all;font-family:'Share Tech Mono',monospace;}
+  .message.mine .msg-bubble{background:rgba(0,170,255,0.1);border:1px solid rgba(0,170,255,0.25);color:#5599bb;}
+  .message.theirs .msg-bubble{background:rgba(0,255,136,0.07);border:1px solid rgba(0,255,136,0.18);color:#339966;}
+  .message.system .msg-bubble{background:transparent;border:none;color:var(--dim);font-size:0.65rem;letter-spacing:0.15em;text-transform:uppercase;word-break:normal;}
 
-/* ══ EMPTY STATE ══ */
-.empty-state{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;color:var(--text3);padding:32px;text-align:center;}
-.empty-state-icon{font-size:2.5rem;opacity:0.3;}
-.empty-state-title{font-size:0.85rem;font-weight:600;color:var(--text2);}
-.empty-state-sub{font-size:0.73rem;line-height:1.5;max-width:260px;}
+  /* decoded state */
+  .msg-bubble.decoded{color:var(--green)!important;background:rgba(0,255,136,0.1)!important;border-color:rgba(0,255,136,0.35)!important;word-break:break-word;}
+  .message.mine .msg-bubble.decoded{color:#99ddff!important;background:rgba(0,170,255,0.15)!important;border-color:rgba(0,170,255,0.4)!important;}
 
-/* ══ RESPONSIVE ══ */
-@media(max-width:640px){
-  :root{--sidebar-w:240px;}
-  .sidebar{position:fixed;left:calc(-1 * var(--sidebar-w));top:0;bottom:0;z-index:50;transition:left 0.25s ease;}
-  .sidebar.open{left:0;box-shadow:8px 0 40px rgba(0,0,0,0.5);}
-  .menu-btn{display:flex;}
-  .chat-area{width:100%;}
-}
+  /* decode button */
+  .decode-btn{background:transparent;border:1px solid var(--border);border-radius:3px;color:var(--dim);font-size:0.7rem;padding:4px 7px;cursor:pointer;transition:all 0.15s;white-space:nowrap;flex-shrink:0;font-family:'Share Tech Mono',monospace;}
+  .decode-btn:hover{border-color:var(--green);color:var(--green);background:rgba(0,255,136,0.08);}
+  .decode-btn.active{border-color:var(--amber);color:var(--amber);background:rgba(255,170,0,0.08);}
+
+  .msg-time{font-size:0.55rem;color:rgba(0,255,136,0.2);margin-top:3px;}
+  .empty-dm{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;color:var(--dim);font-size:0.75rem;letter-spacing:0.15em;text-transform:uppercase;}
+
+  /* INPUT */
+  .input-area{display:flex;gap:8px;padding:12px 16px;background:var(--panel2);border-top:1px solid var(--border);flex-shrink:0;align-items:flex-end;}
+  #msgInput{flex:1;background:rgba(0,0,0,0.4);border:1px solid var(--border);border-radius:3px;color:var(--green);font-family:'Share Tech Mono',monospace;font-size:0.9rem;padding:10px 12px;outline:none;resize:none;max-height:120px;line-height:1.4;transition:border-color 0.2s;}
+  #msgInput:focus{border-color:var(--green);}
+  .send-btn{padding:10px 18px;border:1px solid var(--green);background:transparent;color:var(--green);font-family:'Orbitron',sans-serif;font-size:0.7rem;font-weight:700;letter-spacing:0.1em;cursor:pointer;border-radius:3px;transition:all 0.2s;white-space:nowrap;height:fit-content;}
+  .send-btn:hover{background:var(--green);color:var(--dark);box-shadow:0 0 12px rgba(0,255,136,0.4);}
+
+  @media(max-width:600px){
+    .sidebar{position:fixed;left:-230px;top:0;bottom:0;z-index:50;transition:left 0.25s;}
+    .sidebar.open{left:0;}
+    .menu-btn{display:flex!important;}
+  }
+  .menu-btn{display:none;background:transparent;border:none;color:var(--green);font-size:1.3rem;cursor:pointer;}
 </style>
 </head>
 <body>
 
-<!-- ══ LOGIN ══ -->
+<!-- LOGIN -->
 <div id="loginScreen">
-  <div class="login-wrap">
+  <div class="login-box">
     <div class="login-logo">
-      <div class="logo-mark">⚔️</div>
-      <div class="logo-name">IMPERIUM</div>
-      <div class="logo-sub">IMP · Mensajería cifrada privada</div>
+      <div class="login-logo-main">IMPERIUM</div>
+      <div class="login-logo-sub">IMP · mensajería cifrada</div>
     </div>
-    <div class="login-card">
-      <div class="field-group">
-        <div class="field-label">Tu apodo</div>
-        <input class="field-input" type="text" id="nickInput" placeholder="Ej: Renzo, Shadow..." maxlength="20" autocomplete="off"/>
-      </div>
-      <div class="field-group">
-        <div class="field-label">Código secreto del grupo</div>
-        <input class="field-input" type="password" id="codeInput" placeholder="Código compartido entre amigos" autocomplete="new-password"/>
-        <div class="field-hint">Todos deben usar el mismo código. Mínimo 4 caracteres.</div>
-      </div>
-      <div class="field-group">
-        <div class="field-label">Vista previa del cifrado</div>
-        <div class="crypto-preview" id="cryptoPreview">Escribe tu apodo y código para ver cómo se cifra...</div>
-      </div>
-      <div class="error-msg" id="errorMsg"></div>
-      <button class="login-btn" onclick="enterChat()">ACCEDER A IMPERIUM →</button>
+    <div>
+      <div class="field-label">▸ Tu apodo</div>
+      <input type="text" id="nickInput" placeholder="Ej: Rodrigo" maxlength="20"/>
     </div>
+    <div>
+      <div class="field-label">▸ Código secreto del grupo</div>
+      <input type="password" id="codeInput" placeholder="Código compartido entre amigos"/>
+      <div class="field-hint">Todos usan el mismo código. Mín. 4 caracteres.</div>
+    </div>
+    <div class="enc-notice">🔐 <strong>Todos los mensajes se cifran automáticamente.</strong> Usa el botón 👁 en cada mensaje para descifrar y leer su contenido.</div>
+    <div class="error-msg" id="errorMsg"></div>
+    <button class="btn" onclick="enterChat()">ACCEDER A IMPERIUM</button>
   </div>
 </div>
 
-<!-- ══ MODAL: NUEVO DM ══ -->
+<!-- MODAL -->
 <div class="modal-overlay" id="addModal">
-  <div class="modal-card">
-    <div class="modal-title">💬 Nuevo privado</div>
-    <div class="modal-sub">Escribe el apodo exacto de tu amigo/a.</div>
-    <div class="field-group">
-      <div class="field-label">Apodo</div>
-      <input class="field-input" type="text" id="dmTargetInput" placeholder="Ej: Rosa, Santa..." maxlength="20" autocomplete="off"/>
+  <div class="modal-box">
+    <div class="modal-title">NUEVO PRIVADO</div>
+    <div class="modal-sub">Escribe el apodo exacto de tu amigo/a</div>
+    <div>
+      <div class="field-label">▸ Apodo</div>
+      <input type="text" id="dmTargetInput" placeholder="Ej: Rosa, Santa..." maxlength="20"/>
     </div>
     <div class="modal-btns">
-      <button class="modal-btn modal-btn-primary" onclick="confirmAddDm()">Abrir chat</button>
-      <button class="modal-btn modal-btn-cancel" onclick="closeModal()">Cancelar</button>
+      <button class="btn" onclick="confirmAddDm()">ABRIR CHAT</button>
+      <button class="btn btn-cancel" onclick="closeModal()">CANCELAR</button>
     </div>
   </div>
 </div>
 
-<!-- ══ APP ══ -->
+<!-- APP -->
 <div id="appScreen">
-  <div class="app-layout">
-
-    <!-- SIDEBAR -->
-    <div class="sidebar" id="sidebar">
-      <div class="sidebar-top">
-        <div class="sidebar-brand">
-          <div class="brand-dot"></div>
-          <div>
-            <div class="brand-name">IMPERIUM</div>
-            <div class="brand-sub">IMP · cifrado automático</div>
-          </div>
-        </div>
-        <input class="search-box" type="text" id="searchBox" placeholder="🔍 Buscar..." oninput="filterContacts(this.value)" autocomplete="off"/>
+  <div class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <div>
+        <div class="sidebar-logo">IMPERIUM</div>
+        <div class="sidebar-imp">IMP · cifrado</div>
       </div>
-
-      <div class="section-hdr"><span class="section-hdr-label">Salas</span></div>
-      <div class="nav-item active" id="item-general" onclick="switchRoom('general',null)">
-        <span class="nav-icon">#</span>
-        <span class="nav-label">general</span>
-        <span class="nav-badge" id="badge-general" style="display:none"></span>
-      </div>
-
-      <div class="section-hdr" style="margin-top:8px;">
-        <span class="section-hdr-label">Mensajes privados</span>
-        <button class="section-hdr-btn" onclick="openModal()" title="Nuevo privado">+</button>
-      </div>
-      <div class="contacts-scroll" id="contactsList"></div>
-
-      <div class="me-bar">
-        <div class="me-avatar" id="meAvatar">?</div>
-        <div class="me-info">
-          <div class="me-name" id="meName">—</div>
-          <div class="me-status">● En línea</div>
-        </div>
-      </div>
+      <div class="status-dot"></div>
     </div>
 
-    <!-- CHAT -->
-    <div class="chat-area">
-      <div class="chat-header">
-        <div class="chat-header-left">
-          <button class="menu-btn" onclick="document.getElementById('sidebar').classList.toggle('open')">☰</button>
-          <div class="chat-header-icon" id="chatIcon">#</div>
-          <div class="chat-header-info">
-            <div class="chat-header-title" id="chatTitle">general</div>
-            <div class="chat-header-sub" id="chatSub">sala principal del grupo</div>
-          </div>
-        </div>
-        <div class="imp-badge">🔐 IMP · cifrado auto</div>
-      </div>
+    <div class="sidebar-section">Salas</div>
+    <div class="room-item active" id="item-general" onclick="switchRoom('general',null)">
+      # general
+      <span class="unread-badge" id="badge-general" style="display:none"></span>
+    </div>
 
-      <div id="messagesContainer"></div>
+    <div class="sidebar-section">
+      Privados
+      <button class="add-dm-btn" onclick="openModal()">+ nuevo</button>
+    </div>
+    <div class="contacts-list" id="contactsList"></div>
 
-      <div class="input-area">
-        <div class="input-wrap">
-          <textarea id="msgInput" rows="1" placeholder="Escribe tu mensaje... (se cifra automáticamente 🔐)"></textarea>
-          <button class="send-btn" onclick="sendMessage()">➤</button>
-        </div>
+    <div class="sidebar-me">Tú: <span id="myNameDisplay"></span></div>
+  </div>
+
+  <div class="chat-area">
+    <div class="chat-header">
+      <div>
+        <div class="chat-title" id="chatTitle"># GENERAL</div>
+        <div class="chat-sub" id="chatSub">sala principal</div>
       </div>
+      <button class="menu-btn" onclick="document.getElementById('sidebar').classList.toggle('open')">☰</button>
+    </div>
+
+    <div class="enc-bar">
+      <span class="enc-icon">🔐</span>
+      <span class="enc-bar-text"><strong>IMPERIUM</strong> · todos los mensajes viajan cifrados · presiona 👁 para descifrar</span>
+    </div>
+
+    <div id="messagesContainer"></div>
+
+    <div class="input-area">
+      <textarea id="msgInput" rows="1" placeholder="Escribe tu mensaje... (Enter para enviar)"></textarea>
+      <button class="send-btn" onclick="sendMessage()">ENVIAR</button>
     </div>
   </div>
 </div>
@@ -316,407 +247,246 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 
-/* ══════════════════════════════════════════
-   SISTEMA DE CIFRADO IMP v3
-   - Tabla de sustitución simple (letra ↔ código 2 chars)
-   - XOR rotativo con la clave del grupo
-   - Separador de tokens con '|'
-   - Robusto, invertible 100%
-══════════════════════════════════════════ */
+// ── CIPHER ──
+const C={A:'4K',B:'7B',C:'3C',D:'9D',E:'1E',F:'5F',G:'8G',H:'2H',I:'6I',J:'0J',K:'4L',L:'7M',M:'3N',N:'9O',O:'1P',P:'5Q',Q:'8R',R:'2S',S:'6T',T:'0U',U:'4V',V:'7W',W:'3X',X:'9Y',Y:'1Z',Z:'5A',' ':'_','.':'..',',':',,','!':'!!','?':'??','-':'--'};
+const DC=Object.fromEntries(Object.entries(C).map(([k,v])=>[v,k]));
+const enc=t=>t.toUpperCase().split('').map(c=>C[c]||c).join('-');
+const dec=t=>t.toUpperCase().split('-').map(p=>DC[p]!==undefined?DC[p]:p).join('');
 
-// Tabla fija: cada char mapea a un código de 2 letras únicas
-const ENC = {
-  'A':'QZ','B':'WX','C':'EV','D':'RU','E':'TY','F':'PS','G':'OA','H':'IB',
-  'I':'UC','J':'YD','K':'HF','L':'JG','M':'KH','N':'LI','O':'MJ','P':'NK',
-  'Q':'BL','R':'VM','S':'CN','T':'FO','U':'GP','V':'HQ','W':'IR','X':'JS',
-  'Y':'KT','Z':'LU',
-  '0':'MA','1':'NB','2':'OC','3':'PD','4':'QE','5':'RF','6':'SG','7':'TH',
-  '8':'UI','9':'VJ',
-  ' ':'WK','!':'XL','?':'YM','.':'ZN',',':'AO',':':'BP',';':'CQ',
-  '-':'DR','_':'ES','@':'FT','#':'GU','&':'HV','(':'IW',')':'JX',
-  '/':'KY','*':'LZ',"'":'MW','"':'NX','\n':'OY'
-};
+function hash(s){let h=0;for(let i=0;i<s.length;i++)h=(Math.imul(31,h)+s.charCodeAt(i))|0;return 'imp'+Math.abs(h).toString(36);}
+const dmKey=(a,b)=>[a,b].sort().join('_x_');
 
-// Tabla inversa generada automáticamente
-const DEC = {};
-for (const [k, v] of Object.entries(ENC)) DEC[v] = k;
+let me='',gk='',currentRoom='general',currentDmWith=null,activeUnsub=null;
+let onlineUsers=new Set();
 
-// Genera array de shifts a partir del código del grupo
-function makeKey(code) {
-  const k = [];
-  for (let i = 0; i < code.length; i++) k.push(code.charCodeAt(i) % 26);
-  return k;
-}
-
-// Rotar un código de 2 letras usando shift (desplazamiento de la segunda letra en A-Z)
-function rotateCode(code, shift, forward) {
-  const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-  const c0 = code[0];
-  const c1 = code[1];
-  const idx = letters.indexOf(c1.toUpperCase());
-  if (idx === -1) return code; // no rotar si no es letra
-  const newIdx = forward
-    ? (idx + shift) % 26
-    : (idx - shift + 26) % 26;
-  return c0 + letters[newIdx];
-}
-
-function encrypt(text, groupCode) {
-  const key = makeKey(groupCode);
-  const tokens = [];
-  let ki = 0;
-
-  for (const ch of text) {
-    const upper = ch.toUpperCase();
-    const base = ENC[upper] ?? ENC[ch];
-
-    if (base === undefined) {
-      // carácter no mapeado → hex con wrapper
-      tokens.push('XX' + ch.charCodeAt(0).toString(16).toUpperCase().padStart(4,'0'));
-      ki++;
-      continue;
-    }
-
-    const shift = key[ki % key.length];
-    ki++;
-    tokens.push(rotateCode(base, shift, true));
+// ── LOGIN ──
+window.enterChat=()=>{
+  const nick=document.getElementById('nickInput').value.trim();
+  const code=document.getElementById('codeInput').value.trim();
+  if(!nick||!code||code.length<4){
+    const e=document.getElementById('errorMsg');
+    e.style.display='block';
+    e.textContent=(!nick||!code)?'❌ Completa todos los campos':'❌ El código debe tener mínimo 4 caracteres';
+    return;
   }
+  me=nick; gk=hash(code);
+  document.getElementById('loginScreen').style.display='none';
+  document.getElementById('appScreen').style.display='flex';
+  document.getElementById('myNameDisplay').textContent=me.toUpperCase();
 
-  return tokens.join('|');
-}
-
-function decrypt(cipher, groupCode) {
-  if (!cipher || !cipher.includes('|') && cipher.length < 2) return cipher;
-  const key = makeKey(groupCode);
-  const parts = cipher.split('|');
-  let result = '';
-  let ki = 0;
-
-  for (const part of parts) {
-    if (!part) { ki++; continue; }
-
-    // carácter especial
-    if (part.startsWith('XX') && part.length === 6) {
-      const hex = part.slice(2);
-      result += String.fromCharCode(parseInt(hex, 16));
-      ki++;
-      continue;
-    }
-
-    const shift = key[ki % key.length];
-    ki++;
-
-    // Desrotar
-    const unrotated = rotateCode(part, shift, false);
-    const decoded = DEC[unrotated];
-    if (decoded !== undefined) {
-      result += decoded;
-    } else {
-      result += part; // fallback: dejar tal cual
-    }
-  }
-
-  return result;
-}
-
-/* ══ Utilidades ══ */
-function hashGroup(s) {
-  let h = 0;
-  for (let i = 0; i < s.length; i++) h = (Math.imul(31, h) + s.charCodeAt(i)) | 0;
-  return 'imp' + Math.abs(h).toString(36);
-}
-
-const dmKey = (a, b) => [a, b].sort().join('__');
-
-function avatarColor(name) {
-  const cols = ['#7c6af7','#f77c6a','#6af77c','#f7c56a','#6ac5f7','#c56af7','#f76ac5','#6af7c5'];
-  let h = 0;
-  for (let i = 0; i < name.length; i++) h += name.charCodeAt(i);
-  return cols[h % cols.length];
-}
-
-function initials(name) { return name.slice(0, 2).toUpperCase(); }
-
-/* ══ Estado ══ */
-let me = '', gk = '', rawCode = '';
-let currentRoom = 'general', currentDmWith = null;
-let activeUnsub = null;
-let onlineUsers = new Set();
-let myContacts = [];
-
-/* ══ Preview en login ══ */
-function updatePreview() {
-  const nick = document.getElementById('nickInput').value.trim();
-  const code = document.getElementById('codeInput').value.trim();
-  const el = document.getElementById('cryptoPreview');
-  if (nick && code.length >= 4) {
-    const sample = 'Hola ' + nick + '!';
-    el.textContent = '"' + sample + '" → ' + encrypt(sample, code);
-    el.classList.add('show');
-  } else {
-    el.textContent = 'Escribe tu apodo y código para ver el cifrado...';
-    el.classList.remove('show');
-  }
-}
-document.getElementById('nickInput').addEventListener('input', updatePreview);
-document.getElementById('codeInput').addEventListener('input', updatePreview);
-
-/* ══ ENTRAR ══ */
-window.enterChat = () => {
-  const nick = document.getElementById('nickInput').value.trim();
-  const code = document.getElementById('codeInput').value.trim();
-  const errEl = document.getElementById('errorMsg');
-  if (!nick || !code) { showErr('❌ Completa todos los campos'); return; }
-  if (code.length < 4) { showErr('❌ El código debe tener mínimo 4 caracteres'); return; }
-
-  function showErr(msg) { errEl.textContent = msg; errEl.style.display = 'block'; }
-
-  errEl.style.display = 'none';
-  me = nick; rawCode = code; gk = hashGroup(code);
-
-  document.getElementById('loginScreen').style.display = 'none';
-  document.getElementById('appScreen').style.display = 'block';
-
-  document.getElementById('meName').textContent = me.toUpperCase();
-  const ava = document.getElementById('meAvatar');
-  ava.textContent = initials(me);
-  ava.style.background = avatarColor(me);
-
-  // Presencia
-  const pRef = ref(db, `${gk}/presence/${me}`);
-  set(pRef, { name: me, ts: Date.now() });
+  const pRef=ref(db,`${gk}/presence/${me}`);
+  set(pRef,{name:me,ts:Date.now()});
   onDisconnect(pRef).remove();
 
-  onValue(ref(db, `${gk}/presence`), snap => {
-    onlineUsers = new Set(snap.exists() ? Object.keys(snap.val()) : []);
-    renderContacts();
-    updateSubStatus();
-  });
-
-  onValue(ref(db, `${gk}/contacts/${me}`), snap => {
-    myContacts = snap.exists() ? Object.values(snap.val()) : [];
+  onValue(ref(db,`${gk}/presence`),snap=>{
+    onlineUsers=new Set(snap.exists()?Object.keys(snap.val()):[]);
     renderContacts();
   });
 
-  switchRoom('general', null);
-  push(ref(db, `${gk}/rooms/general`), { type:'system', text:`${me} se unió a IMPERIUM`, timestamp:serverTimestamp() });
+  onValue(ref(db,`${gk}/contacts/${me}`),snap=>{
+    window._myContacts=snap.exists()?Object.values(snap.val()):[];
+    renderContacts();
+  });
+
+  switchRoom('general',null);
+  push(ref(db,`${gk}/rooms/general`),{type:'system',text:`${me} se unió a IMPERIUM`,timestamp:serverTimestamp()});
 };
 
-/* ══ CONTACTOS ══ */
-function renderContacts(filter = '') {
-  const list = document.getElementById('contactsList');
-  list.innerHTML = '';
-  const items = myContacts.filter(n => n.toLowerCase().includes(filter.toLowerCase()));
-  if (items.length === 0) {
-    const e = document.createElement('div');
-    e.style.cssText = 'padding:12px 16px;font-size:0.72rem;color:var(--text3);line-height:1.5;';
-    e.textContent = 'Sin mensajes privados aún. Pulsa + para iniciar uno.';
-    list.appendChild(e); return;
-  }
-  items.forEach(name => {
-    const key = dmKey(me, name);
-    const div = document.createElement('div');
-    div.className = 'nav-item' + (currentRoom === key ? ' active' : '');
-    div.id = 'item-' + key;
-    div.innerHTML = `<div class="pip ${onlineUsers.has(name)?'online':''}"></div><span class="nav-label">@ ${name}</span>`;
-    div.onclick = () => switchRoom(key, name);
+// ── CONTACTS ──
+window._myContacts=[];
+function renderContacts(){
+  const list=document.getElementById('contactsList');
+  list.innerHTML='';
+  (window._myContacts||[]).forEach(name=>{
+    const key=dmKey(me,name);
+    const isActive=currentRoom===key;
+    const isOnline=onlineUsers.has(name);
+    const div=document.createElement('div');
+    div.className='room-item dm'+(isActive?' active dm':'');
+    div.id='item-'+key;
+    div.innerHTML=`<div class="dm-item-inner"><div class="online-pip ${isOnline?'on':''}"></div><span>@ ${name}</span></div><span class="unread-badge" id="badge-${key}" style="display:none"></span>`;
+    div.onclick=()=>switchRoom(key,name);
     list.appendChild(div);
   });
 }
-window.filterContacts = v => renderContacts(v);
 
-async function addContact(name) {
-  if (!name || name === me || myContacts.includes(name)) return;
-  await set(ref(db, `${gk}/contacts/${me}/${name}`), name);
-  await set(ref(db, `${gk}/contacts/${name}/${me}`), me);
+async function addContact(name){
+  if(!name||name===me||(window._myContacts||[]).includes(name))return;
+  await set(ref(db,`${gk}/contacts/${me}/${name}`),name);
+  await set(ref(db,`${gk}/contacts/${name}/${me}`),me);
 }
 
-/* ══ MODAL ══ */
-window.openModal = () => {
-  document.getElementById('addModal').classList.add('show');
-  setTimeout(() => document.getElementById('dmTargetInput').focus(), 100);
-};
-window.closeModal = () => {
-  document.getElementById('addModal').classList.remove('show');
-  document.getElementById('dmTargetInput').value = '';
-};
-window.confirmAddDm = async () => {
-  const t = document.getElementById('dmTargetInput').value.trim();
-  if (!t) return;
-  if (t === me) { alert('¡No puedes chatear contigo mismo! 😅'); return; }
+// ── MODAL ──
+window.openModal=()=>{document.getElementById('addModal').classList.add('show');setTimeout(()=>document.getElementById('dmTargetInput').focus(),100);};
+window.closeModal=()=>{document.getElementById('addModal').classList.remove('show');document.getElementById('dmTargetInput').value='';};
+window.confirmAddDm=async()=>{
+  const t=document.getElementById('dmTargetInput').value.trim();
+  if(!t)return;
+  if(t===me){alert('No puedes chatear contigo mismo 😅');return;}
   await addContact(t);
   closeModal();
-  switchRoom(dmKey(me, t), t);
+  switchRoom(dmKey(me,t),t);
 };
-document.getElementById('addModal').addEventListener('click', e => { if (e.target === document.getElementById('addModal')) window.closeModal(); });
-document.getElementById('dmTargetInput').addEventListener('keydown', e => { if (e.key === 'Enter') window.confirmAddDm(); });
 
-/* ══ SWITCH ROOM ══ */
-window.switchRoom = (roomId, dmWith) => {
-  if (activeUnsub) { activeUnsub(); activeUnsub = null; }
-  document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
-  const el = document.getElementById('item-' + roomId);
-  if (el) el.classList.add('active');
-  currentRoom = roomId; currentDmWith = dmWith;
+// ── SWITCH ROOM ──
+window.switchRoom=(roomId,dmWith)=>{
+  if(activeUnsub){activeUnsub();activeUnsub=null;}
+  document.querySelectorAll('.room-item').forEach(el=>el.classList.remove('active'));
+  const el=document.getElementById('item-'+roomId);
+  if(el)el.classList.add('active');
+  currentRoom=roomId; currentDmWith=dmWith;
 
-  updateHeader(roomId, dmWith);
+  const titleEl=document.getElementById('chatTitle');
+  const subEl=document.getElementById('chatSub');
+  if(roomId==='general'){
+    titleEl.textContent='# GENERAL'; titleEl.className='chat-title';
+    subEl.textContent='sala principal del grupo';
+  } else {
+    titleEl.textContent='@ '+dmWith.toUpperCase(); titleEl.className='chat-title dm';
+    subEl.textContent=onlineUsers.has(dmWith)?'● en línea':'○ desconectado/a';
+  }
 
-  const container = document.getElementById('messagesContainer');
-  container.innerHTML = '';
-  const path = roomId === 'general' ? `${gk}/rooms/general` : `${gk}/dms/${roomId}`;
+  const container=document.getElementById('messagesContainer');
+  container.innerHTML='';
+  const path=roomId==='general'?`${gk}/rooms/general`:`${gk}/dms/${roomId}`;
 
-  activeUnsub = onValue(ref(db, path), snap => {
-    container.innerHTML = '';
-    if (!snap.exists()) {
-      if (roomId !== 'general') {
-        container.innerHTML = `<div class="empty-state"><div class="empty-state-icon">🔐</div><div class="empty-state-title">Conversación privada</div><div class="empty-state-sub">Los mensajes viajan cifrados. Presiona 👁 en cada mensaje para leerlo.</div></div>`;
+  activeUnsub=onValue(ref(db,path),snap=>{
+    container.innerHTML='';
+    if(!snap.exists()){
+      if(roomId!=='general'){
+        const empty=document.createElement('div');
+        empty.className='empty-dm';
+        empty.innerHTML='<span>🔐</span><span>Inicio de conversación privada</span><span style="font-size:0.6rem;opacity:0.5">Mensajes guardados para siempre · cifrado automático</span>';
+        container.appendChild(empty);
       }
       return;
     }
-    const msgs = Object.values(snap.val()).sort((a,b) => (a.timestamp||0)-(b.timestamp||0));
-    let lastDate = '';
-    msgs.forEach(msg => {
-      if (msg.timestamp) {
-        const d = new Date(msg.timestamp).toLocaleDateString('es-PE', {weekday:'long',day:'numeric',month:'long'});
-        if (d !== lastDate) {
-          lastDate = d;
-          const dd = document.createElement('div');
-          dd.className = 'msg-day-divider';
-          dd.innerHTML = `<span>${d}</span>`;
-          container.appendChild(dd);
-        }
-      }
-      renderMsg(msg, container);
-    });
-    container.scrollTop = container.scrollHeight;
+    Object.values(snap.val())
+      .sort((a,b)=>(a.timestamp||0)-(b.timestamp||0))
+      .forEach(msg=>renderMsg(msg,container));
+    container.scrollTop=container.scrollHeight;
   });
 
   document.getElementById('sidebar').classList.remove('open');
 };
 
-function updateHeader(roomId, dmWith) {
-  const title = document.getElementById('chatTitle');
-  const sub = document.getElementById('chatSub');
-  const icon = document.getElementById('chatIcon');
-  if (roomId === 'general') {
-    title.textContent = 'general'; icon.textContent = '#';
-    icon.style.color = 'var(--accent2)';
-    sub.innerHTML = `<span class="opip on"></span>${onlineUsers.size} conectado${onlineUsers.size!==1?'s':''}`;
-  } else {
-    const on = onlineUsers.has(dmWith);
-    title.textContent = dmWith; icon.textContent = '@';
-    icon.style.color = 'var(--blue)';
-    sub.innerHTML = `<span class="opip ${on?'on':'off'}"></span>${on?'En línea':'Desconectado/a'}`;
-  }
-}
-
-function updateSubStatus() {
-  if (currentRoom === 'general') {
-    document.getElementById('chatSub').innerHTML = `<span class="opip on"></span>${onlineUsers.size} conectado${onlineUsers.size!==1?'s':''}`;
-  } else if (currentDmWith) {
-    const on = onlineUsers.has(currentDmWith);
-    document.getElementById('chatSub').innerHTML = `<span class="opip ${on?'on':'off'}"></span>${on?'En línea':'Desconectado/a'}`;
-  }
-}
-
-/* ══ RENDER MENSAJE ══ */
-function renderMsg(msg, container) {
-  const div = document.createElement('div');
-  if (msg.type === 'system') {
-    div.className = 'message system';
-    div.innerHTML = `<div class="msg-bubble">— ${msg.text} —</div>`;
-    container.appendChild(div); return;
+// ── RENDER MESSAGE ──
+function renderMsg(msg,container){
+  const div=document.createElement('div');
+  if(msg.type==='system'){
+    div.className='message system';
+    div.innerHTML=`<div class="msg-bubble">— ${msg.text} —</div>`;
+    container.appendChild(div);
+    return;
   }
 
-  const isMe = msg.sender === me;
-  div.className = 'message ' + (isMe ? 'mine' : 'theirs');
-  const time = msg.timestamp ? new Date(msg.timestamp).toLocaleTimeString('es-PE',{hour:'2-digit',minute:'2-digit'}) : '';
-  const color = avatarColor(msg.sender);
-  const initl = initials(msg.sender);
+  const isMe=msg.sender===me;
+  div.className='message '+(isMe?'mine':'theirs');
 
-  // ID único para este mensaje en el DOM
-  const msgId = 'msg-' + Math.random().toString(36).slice(2,9);
+  const time=msg.timestamp?new Date(msg.timestamp).toLocaleTimeString('es-PE',{hour:'2-digit',minute:'2-digit'}):'';
+  const msgId='msg-'+Math.random().toString(36).slice(2);
 
-  // El texto que se guarda en DB siempre está cifrado (encoded: true)
-  const cipherText = msg.text;
-  const isCiphered = msg.encoded === true;
+  // Always show cipher text; decode button toggles
+  div.innerHTML=`
+    <div class="msg-name">${msg.sender}</div>
+    <div class="bubble-row">
+      <div class="msg-bubble" id="bubble-${msgId}">${msg.text}</div>
+      <button class="decode-btn" id="btn-${msgId}" onclick="toggleDecode('${msgId}','${encodeURIComponent(msg.text)}')">👁</button>
+    </div>
+    <div class="msg-time">${time}</div>`;
 
-  div.innerHTML = `
-    <div class="msg-avatar" style="background:${color}">${initl}</div>
-    <div class="msg-body">
-      <div class="msg-meta">
-        <span class="msg-sender" style="color:${color}">${msg.sender}</span>
-        <span class="msg-time">${time}</span>
-        ${isCiphered ? '<span style="font-size:0.6rem;color:var(--accent);opacity:0.7;margin-left:2px">🔐</span>' : ''}
-      </div>
-      <div class="msg-bubble is-cipher" id="${msgId}">${escHtml(cipherText)}</div>
-      ${isCiphered
-        ? `<button class="decode-btn" id="btn-${msgId}" onclick="toggleReveal('${msgId}',this)">👁 descifrar</button>`
-        : ''}
-    </div>`;
-
-  // Guardar el texto cifrado en el elemento para usarlo después
-  div.querySelector('#' + msgId).dataset.cipher = cipherText;
   container.appendChild(div);
 }
 
-function escHtml(s) {
-  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-}
-
-/* ══ DESCIFRAR/OCULTAR por mensaje ══ */
-window.toggleReveal = (msgId, btn) => {
-  const bubble = document.getElementById(msgId);
-  if (!bubble) return;
-
-  if (btn.classList.contains('revealed')) {
-    // Volver a mostrar cifrado
-    bubble.textContent = bubble.dataset.cipher;
-    bubble.className = 'msg-bubble is-cipher';
-    btn.className = 'decode-btn';
-    btn.textContent = '👁 descifrar';
+// ── DECODE TOGGLE ──
+window.toggleDecode=(id, encodedRaw)=>{
+  const bubble=document.getElementById('bubble-'+id);
+  const btn=document.getElementById('btn-'+id);
+  const encoded=decodeURIComponent(encodedRaw);
+  if(bubble.classList.contains('decoded')){
+    // re-encode
+    bubble.textContent=encoded;
+    bubble.classList.remove('decoded');
+    btn.classList.remove('active');
+    btn.textContent='👁';
   } else {
-    // Descifrar y mostrar
-    const plain = decrypt(bubble.dataset.cipher, rawCode);
-    bubble.innerHTML = escHtml(plain).replace(/\n/g, '<br>');
-    bubble.className = 'msg-bubble is-plain';
-    btn.className = 'decode-btn revealed';
-    btn.textContent = '🔒 ocultar';
+    // decode
+    bubble.textContent=dec(encoded);
+    bubble.classList.add('decoded');
+    btn.classList.add('active');
+    btn.textContent='🔒';
   }
 };
 
-/* ══ ENVIAR (siempre cifrado) ══ */
-window.sendMessage = async () => {
-  const input = document.getElementById('msgInput');
-  const text = input.value.trim();
-  if (!text) return;
-
-  const ciphered = encrypt(text, rawCode);
-  const path = currentRoom === 'general' ? `${gk}/rooms/general` : `${gk}/dms/${currentRoom}`;
-  if (currentDmWith) await addContact(currentDmWith);
-
-  await push(ref(db, path), {
-    type: 'chat',
-    sender: me,
-    text: ciphered,
-    encoded: true,
-    timestamp: serverTimestamp()
-  });
-
-  input.value = '';
-  input.style.height = 'auto';
+// ── SEND ── (always encrypted)
+window.sendMessage=async()=>{
+  const input=document.getElementById('msgInput');
+  const text=input.value.trim();
+  if(!text)return;
+  const payload=enc(text);
+  const path=currentRoom==='general'?`${gk}/rooms/general`:`${gk}/dms/${currentRoom}`;
+  if(currentDmWith)await addContact(currentDmWith);
+  push(ref(db,path),{type:'chat',sender:me,text:payload,timestamp:serverTimestamp()});
+  input.value=''; input.style.height='auto';
 };
 
-/* ══ TECLADO ══ */
-document.getElementById('msgInput').addEventListener('keydown', e => {
-  if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); window.sendMessage(); }
-});
-document.getElementById('msgInput').addEventListener('input', function() {
-  this.style.height = 'auto';
-  this.style.height = Math.min(this.scrollHeight, 120) + 'px';
-});
-document.getElementById('nickInput').addEventListener('keydown', e => { if (e.key==='Enter') document.getElementById('codeInput').focus(); });
-document.getElementById('codeInput').addEventListener('keydown', e => { if (e.key==='Enter') window.enterChat(); });
+// ── KEYBOARD ──
+document.getElementById('msgInput').addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();window.sendMessage();}});
+document.getElementById('msgInput').addEventListener('input',function(){this.style.height='auto';this.style.height=Math.min(this.scrollHeight,120)+'px';});
+document.getElementById('nickInput').addEventListener('keydown',e=>{if(e.key==='Enter')document.getElementById('codeInput').focus();});
+document.getElementById('codeInput').addEventListener('keydown',e=>{if(e.key==='Enter')window.enterChat();});
+document.getElementById('dmTargetInput').addEventListener('keydown',e=>{if(e.key==='Enter')window.confirmAddDm();});
+document.getElementById('addModal').addEventListener('click',e=>{if(e.target===document.getElementById('addModal'))window.closeModal();});
+</script>
+
+<script>
+  // PWA Service Worker
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('./sw.js')
+        .then(reg => console.log('IMP SW registrado:', reg.scope))
+        .catch(err => console.log('SW error:', err));
+    });
+  }
+
+  // Prompt de instalación
+  let deferredPrompt;
+  window.addEventListener('beforeinstallprompt', e => {
+    e.preventDefault();
+    deferredPrompt = e;
+    // Mostrar banner de instalación si no está en modo standalone
+    if (!window.matchMedia('(display-mode: standalone)').matches) {
+      showInstallBanner();
+    }
+  });
+
+  function showInstallBanner() {
+    const banner = document.createElement('div');
+    banner.id = 'install-banner';
+    banner.style.cssText = `
+      position:fixed; bottom:80px; left:50%; transform:translateX(-50%);
+      background:#0a1a10; border:1px solid #00ff88;
+      border-radius:6px; padding:12px 20px;
+      display:flex; align-items:center; gap:12px;
+      font-family:'Share Tech Mono',monospace; font-size:0.75rem;
+      color:#00ff88; z-index:9999; box-shadow:0 0 20px rgba(0,255,136,0.2);
+      white-space:nowrap;
+    `;
+    banner.innerHTML = `
+      <span>📲 Instalar IMPERIUM como app</span>
+      <button onclick="installApp()" style="background:#00ff88;color:#050f0a;border:none;padding:6px 14px;border-radius:3px;font-family:'Share Tech Mono',monospace;font-size:0.72rem;cursor:pointer;font-weight:bold;">INSTALAR</button>
+      <button onclick="document.getElementById('install-banner').remove()" style="background:transparent;border:1px solid #1a4a2a;color:#00994d;padding:6px 10px;border-radius:3px;font-family:'Share Tech Mono',monospace;font-size:0.7rem;cursor:pointer;">✕</button>
+    `;
+    document.body.appendChild(banner);
+  }
+
+  window.installApp = async () => {
+    if (!deferredPrompt) return;
+    deferredPrompt.prompt();
+    const { outcome } = await deferredPrompt.userChoice;
+    deferredPrompt = null;
+    document.getElementById('install-banner')?.remove();
+  };
 </script>
 </body>
 </html>
