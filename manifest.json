@@ -2,7 +2,7 @@
   "name": "IMPERIUM",
   "short_name": "IMP",
   "description": "Sistema de mensajería cifrada",
-  "start_url": "/imperium/",
+  "start_url": "/IMP/",
   "display": "standalone",
   "background_color": "#050f0a",
   "theme_color": "#00ff88",
